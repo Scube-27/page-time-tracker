@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Page Time Tracker</title>
+<link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="title">
+        <span class="dot"></span>
+        <span>Page Time Tracker</span>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="enabledToggle" />
+        <span class="slider"></span>
+      </label>
+    </header>
+
+    <div id="emptyState" class="empty" hidden>
+      No time tracked yet today. Browse a page and the widget will start counting.
+    </div>
+
+    <ul id="siteList" class="site-list"></ul>
+
+    <footer>
+      <button id="resetBtn" class="reset-btn">Reset today's data</button>
+      <button id="statsBtn" class="stats-btn">Statistics</button>
+    </footer>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

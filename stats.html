@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Page Time Tracker — Statistics</title>
+<link rel="stylesheet" href="stats.css" />
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="title">
+        <span class="dot"></span>
+        <h1>Page Time Tracker</h1>
+      </div>
+      <p class="subtitle">Statistics</p>
+    </header>
+
+    <section class="cards" id="cards"></section>
+
+    <section class="panel">
+      <h2>Today by site</h2>
+      <div id="todayChart" class="bar-list"></div>
+      <p id="todayEmpty" class="empty" hidden>No time tracked yet today.</p>
+    </section>
+
+    <section class="panel">
+      <h2>Last 7 days</h2>
+      <div id="weekChart" class="day-chart"></div>
+    </section>
+
+    <section class="panel">
+      <h2>All-time top sites</h2>
+      <div id="allTimeChart" class="bar-list"></div>
+      <p id="allTimeEmpty" class="empty" hidden>No history recorded yet.</p>
+    </section>
+  </div>
+  <script src="stats.js"></script>
+</body>
+</html>
