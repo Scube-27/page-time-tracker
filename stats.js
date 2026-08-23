@@ -155,6 +155,7 @@ async function render() {
     .sort((a, b) => b.seconds - a.seconds);
 
   const cards = document.getElementById("cards");
+  cards.innerHTML = "";
   renderCard(cards, fmt(todayTotal), "Today total");
   renderCard(cards, fmt(weekTotal), "Last 7 days");
   renderCard(cards, fmt(allTimeTotal), "All-time total");
