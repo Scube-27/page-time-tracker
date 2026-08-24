@@ -72,10 +72,7 @@
           color: #4ade80;
           user-select: none;
           cursor: grab;
-          transition: opacity 0.15s ease, transform 0.15s ease, background 0.15s ease;
-        }
-        .wrap:hover {
-          background: #000;
+          transition: opacity 0.15s ease, transform 0.15s ease;
         }
         .wrap:active { cursor: grabbing; }
         .wrap.dragging { transition: none; }
