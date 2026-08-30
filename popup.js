@@ -1,6 +1,9 @@
 const ENABLED_KEY = "ptt_enabled";
 const ALERT_MINUTES_KEY = "ptt_alert_minutes";
+const ANIMAL_ENABLED_KEY = "ptt_animal_enabled";
+const ANIMAL_TYPE_KEY = "ptt_animal_type";
 const DEFAULT_ALERT_MINUTES = 30;
+const DEFAULT_ANIMAL_TYPE = "🐱";
 
 function fmt(totalSeconds) {
   const s = Math.max(0, Math.floor(totalSeconds));
@@ -27,15 +30,27 @@ async function loadAlertMinutes() {
   return typeof minutes === "number" ? minutes : DEFAULT_ALERT_MINUTES;
 }
 
+async function loadAnimalSettings() {
+  const { [ANIMAL_ENABLED_KEY]: enabled, [ANIMAL_TYPE_KEY]: type } = await chrome.storage.local.get([
+    ANIMAL_ENABLED_KEY,
+    ANIMAL_TYPE_KEY,
+  ]);
+  return { enabled: enabled === true, type: type || DEFAULT_ANIMAL_TYPE };
+}
+
 async function render() {
-  const [enabled, stats, alertMinutes] = await Promise.all([
+  const [enabled, stats, alertMinutes, animal] = await Promise.all([
     loadEnabled(),
     loadStats(),
     loadAlertMinutes(),
+    loadAnimalSettings(),
   ]);
 
   document.getElementById("enabledToggle").checked = enabled;
   document.getElementById("alertMinutes").value = alertMinutes;
+  document.getElementById("animalToggle").checked = animal.enabled;
+  document.getElementById("animalType").value = animal.type;
+  document.getElementById("animalPreview").textContent = animal.type;
 
   const list = document.getElementById("siteList");
   const empty = document.getElementById("emptyState");
@@ -76,6 +91,15 @@ document.getElementById("alertMinutes").addEventListener("change", async (e) => 
   const minutes = Math.max(0, parseInt(e.target.value, 10) || 0);
   e.target.value = minutes;
   await chrome.storage.local.set({ [ALERT_MINUTES_KEY]: minutes });
+});
+
+document.getElementById("animalToggle").addEventListener("change", async (e) => {
+  await chrome.runtime.sendMessage({ type: "SET_ANIMAL_ENABLED", enabled: e.target.checked });
+});
+
+document.getElementById("animalType").addEventListener("change", async (e) => {
+  document.getElementById("animalPreview").textContent = e.target.value;
+  await chrome.runtime.sendMessage({ type: "SET_ANIMAL_TYPE", animalType: e.target.value });
 });
 
 document.getElementById("statsBtn").addEventListener("click", () => {
