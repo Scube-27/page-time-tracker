@@ -4,19 +4,8 @@
 const HISTORY_KEY = "ptt_history"; // { [date: "YYYY-MM-DD"]: { [hostname]: seconds } }
 const ENABLED_KEY = "ptt_enabled";
 const ALERT_MINUTES_KEY = "ptt_alert_minutes"; // 0 (or unset) = alerts off
-const ANIMAL_ENABLED_KEY = "ptt_animal_enabled";
-const ANIMAL_TYPE_KEY = "ptt_animal_type";
 const HISTORY_RETENTION_DAYS = 90;
 const DEFAULT_ALERT_MINUTES = 30;
-const DEFAULT_ANIMAL_TYPE = "🐱";
-
-async function broadcastToTabs(message) {
-  const tabs = await chrome.tabs.query({});
-  for (const tab of tabs) {
-    if (tab.id == null) continue;
-    chrome.tabs.sendMessage(tab.id, message).catch(() => {});
-  }
-}
 
 function todayString() {
   const d = new Date();
@@ -57,16 +46,6 @@ async function getEnabled() {
 async function getAlertMinutes() {
   const { [ALERT_MINUTES_KEY]: minutes } = await chrome.storage.local.get(ALERT_MINUTES_KEY);
   return typeof minutes === "number" ? minutes : DEFAULT_ALERT_MINUTES;
-}
-
-async function getAnimalEnabled() {
-  const { [ANIMAL_ENABLED_KEY]: enabled } = await chrome.storage.local.get(ANIMAL_ENABLED_KEY);
-  return enabled === true; // default off — opt-in companion
-}
-
-async function getAnimalType() {
-  const { [ANIMAL_TYPE_KEY]: type } = await chrome.storage.local.get(ANIMAL_TYPE_KEY);
-  return type || DEFAULT_ANIMAL_TYPE;
 }
 
 async function maybeNotifyThresholdCrossed(hostname, prevTotal, newTotal) {
@@ -124,13 +103,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         break;
       }
       case "GET_STATE": {
-        const [enabled, todayTotal, animalEnabled, animalType] = await Promise.all([
+        const [enabled, todayTotal] = await Promise.all([
           getEnabled(),
           getTodaySeconds(message.hostname),
-          getAnimalEnabled(),
-          getAnimalType(),
         ]);
-        sendResponse({ enabled, todayTotal, animalEnabled, animalType });
+        sendResponse({ enabled, todayTotal });
         break;
       }
       case "GET_ALL_STATS": {
@@ -145,19 +122,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
       case "SET_ENABLED": {
         await chrome.storage.local.set({ [ENABLED_KEY]: message.enabled });
-        await broadcastToTabs({ type: "ENABLED_CHANGED", enabled: message.enabled });
-        sendResponse({ ok: true });
-        break;
-      }
-      case "SET_ANIMAL_ENABLED": {
-        await chrome.storage.local.set({ [ANIMAL_ENABLED_KEY]: message.enabled });
-        await broadcastToTabs({ type: "ANIMAL_ENABLED_CHANGED", enabled: message.enabled });
-        sendResponse({ ok: true });
-        break;
-      }
-      case "SET_ANIMAL_TYPE": {
-        await chrome.storage.local.set({ [ANIMAL_TYPE_KEY]: message.animalType });
-        await broadcastToTabs({ type: "ANIMAL_TYPE_CHANGED", animalType: message.animalType });
+        const tabs = await chrome.tabs.query({});
+        for (const tab of tabs) {
+          if (tab.id == null) continue;
+          chrome.tabs
+            .sendMessage(tab.id, { type: "ENABLED_CHANGED", enabled: message.enabled })
+            .catch(() => {});
+        }
         sendResponse({ ok: true });
         break;
       }

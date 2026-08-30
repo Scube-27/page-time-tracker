@@ -8,7 +8,6 @@ A Chrome (Manifest V3) extension that shows a small floating widget on every pag
 - **Accurate tracking** — only counts time while the tab is actually visible *and* focused, so background tabs don't inflate your numbers.
 - **Popup dashboard** — toggle tracking on/off, see today's sites ranked by time spent, reset today's data, and set a per-site time alert threshold.
 - **Site time alerts** — get a native browser notification the moment any site crosses your configured minutes-per-day threshold (set to `0` to disable).
-- **Buddy** — an optional cute animal companion (cat, dog, panda, bunny, penguin, or fox) that floats beside the timer widget, bobbing gently and occasionally showing an encouraging message. It stays stuck to whichever side of the timer widget has room, and follows it live while you drag it around. Toggle it and pick the animal from the popup.
 - **Statistics page** — a full dashboard with:
   - Today's total, last-7-days total, all-time total, and top site today
   - A bar chart of today's time by site
