@@ -6,7 +6,8 @@ A Chrome (Manifest V3) extension that shows a small floating widget on every pag
 
 - **Floating widget** — a small, draggable, glassy green HUD pinned to the top-right corner of every page. Shows the current page-view session time and today's running total for that site.
 - **Accurate tracking** — only counts time while the tab is actually visible *and* focused, so background tabs don't inflate your numbers.
-- **Popup dashboard** — toggle tracking on/off, see today's sites ranked by time spent, and reset today's data.
+- **Popup dashboard** — toggle tracking on/off, see today's sites ranked by time spent, reset today's data, and set a per-site time alert threshold.
+- **Site time alerts** — get a native browser notification the moment any site crosses your configured minutes-per-day threshold (set to `0` to disable).
 - **Statistics page** — a full dashboard with:
   - Today's total, last-7-days total, all-time total, and top site today
   - A bar chart of today's time by site

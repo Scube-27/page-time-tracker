@@ -3,7 +3,9 @@
 
 const HISTORY_KEY = "ptt_history"; // { [date: "YYYY-MM-DD"]: { [hostname]: seconds } }
 const ENABLED_KEY = "ptt_enabled";
+const ALERT_MINUTES_KEY = "ptt_alert_minutes"; // 0 (or unset) = alerts off
 const HISTORY_RETENTION_DAYS = 90;
+const DEFAULT_ALERT_MINUTES = 30;
 
 function todayString() {
   const d = new Date();
@@ -41,13 +43,39 @@ async function getEnabled() {
   return enabled !== false; // default true
 }
 
+async function getAlertMinutes() {
+  const { [ALERT_MINUTES_KEY]: minutes } = await chrome.storage.local.get(ALERT_MINUTES_KEY);
+  return typeof minutes === "number" ? minutes : DEFAULT_ALERT_MINUTES;
+}
+
+async function maybeNotifyThresholdCrossed(hostname, prevTotal, newTotal) {
+  const minutes = await getAlertMinutes();
+  if (!minutes || minutes <= 0) return;
+  const thresholdSeconds = minutes * 60;
+  // Totals only climb through the day, so this window is crossed exactly once
+  // per site per day — no separate "already alerted" bookkeeping needed.
+  if (prevTotal < thresholdSeconds && newTotal >= thresholdSeconds) {
+    chrome.notifications.create(`ptt-${hostname}-${todayString()}`, {
+      type: "basic",
+      iconUrl: "icons/icon128.png",
+      title: "Page Time Tracker",
+      message: `You've spent ${minutes} min on ${hostname} today.`,
+      priority: 1,
+    });
+  }
+}
+
 async function addTime(hostname, seconds) {
   const history = await getHistory();
   const today = todayString();
   if (!history[today]) history[today] = {};
-  history[today][hostname] = (history[today][hostname] || 0) + seconds;
+  const prevTotal = history[today][hostname] || 0;
+  const newTotal = prevTotal + seconds;
+  history[today][hostname] = newTotal;
   const saved = await setHistory(history);
-  return saved[today][hostname];
+  const finalTotal = saved[today][hostname];
+  await maybeNotifyThresholdCrossed(hostname, prevTotal, finalTotal);
+  return finalTotal;
 }
 
 async function getTodaySeconds(hostname) {

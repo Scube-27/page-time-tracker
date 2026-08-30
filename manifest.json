@@ -3,7 +3,7 @@
   "name": "Page Time Tracker",
   "version": "1.0.0",
   "description": "A floating widget that shows how long you've been on the current tab, plus your total time on that site today.",
-  "permissions": ["storage"],
+  "permissions": ["storage", "notifications"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js"
