@@ -123,7 +123,7 @@
           letter-spacing: 0.02em;
         }
       </style>
-      <div class="wrap" part="wrap" title="${HOSTNAME}">
+      <div class="wrap" part="wrap">
         <span class="dot"></span>
         <button class="close" title="Hide widget for this page">&times;</button>
         <div class="session">0:00</div>
@@ -132,6 +132,7 @@
     `;
 
     els.wrap = shadow.querySelector(".wrap");
+    els.wrap.title = HOSTNAME;
     els.session = shadow.querySelector(".session");
     els.today = shadow.querySelector(".today");
     els.close = shadow.querySelector(".close");
