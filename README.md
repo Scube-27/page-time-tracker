@@ -13,7 +13,7 @@ A small, always-visible timer on every page, daily per-site totals, limit alerts
 ![Data](https://img.shields.io/badge/data-local%20only-10b981?style=flat-square)
 ![Dependencies](https://img.shields.io/badge/dependencies-none-059669?style=flat-square)
 
-[Features](#features) · [Installation](#installation) · [Permissions](#permissions) · [Privacy](#privacy) · [Development](#development)
+[Features](#features) · [Installation](#installation) · [Permissions](#permissions) · [Privacy](#privacy) · [Publishing](docs/PUBLISHING.md)
 
 <br />
 
@@ -87,39 +87,6 @@ Page Time Tracker records only the **hostname** of each site and the **number of
 
 See the full [Privacy Policy](PRIVACY.md).
 
-## Development
+## Publishing
 
-There is no build step and no dependencies; it's plain JavaScript, HTML and CSS.
-
-```
-├── manifest.json        Extension manifest (MV3)
-├── background.js        Service worker: per-day/per-site history, alerts
-├── content.js           Floating widget and visibility-aware timer
-├── popup.{html,js,css}  Toolbar popup
-├── stats.{html,js,css}  Statistics dashboard
-├── icons/               16 / 48 / 128 px icons
-└── docs/screenshots/    README images (not shipped)
-```
-
-After editing, click **Reload** on the extension card at `chrome://extensions`. Content-script changes also need the open tabs to be refreshed.
-
-<details>
-<summary><b>Storage schema</b></summary>
-
-| Key | Shape |
-|---|---|
-| `ptt_history` | `{ "YYYY-MM-DD": { "<hostname>": seconds } }`, kept for 90 days |
-| `ptt_enabled` | `boolean`; tracking on or off (default `true`) |
-| `ptt_alert_minutes` | `number`; daily limit per site, `0` = off (default `30`) |
-| `ptt_widget_pos` | `{ top, left }`; last widget position |
-
-</details>
-
-### Packaging a release
-
-1. Increase `version` in `manifest.json`.
-2. Build the upload archive:
-   ```bash
-   zip -r page-time-tracker.zip manifest.json *.js *.html *.css icons
-   ```
-3. Upload it in the [Chrome Web Store Developer Dashboard](https://chrome.google.com/webstore/devconsole).
+Release and Chrome Web Store submission steps are in the [Publishing Guide](docs/PUBLISHING.md).
